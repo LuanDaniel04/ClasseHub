@@ -85,8 +85,6 @@ fun HomeScreen(navController: NavController) {
     }
 }
 
-//Barra de Navegação (Lembrar de arrumar uns detalhes)
-
 @Composable
 fun CustomBottomBar(navController: NavController) {
     BottomAppBar(
