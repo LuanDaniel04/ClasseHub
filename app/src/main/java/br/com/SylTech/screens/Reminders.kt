@@ -47,7 +47,7 @@ fun ReminderScreen(navController: NavController) {
         bottomBar = { CustomBottomBar3(navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {navController.navigate("NewReminder")},
                 containerColor = Color(0xFF615690),
             ) {
                 Icon(
@@ -69,7 +69,6 @@ fun ReminderScreen(navController: NavController) {
     }
 }
 
-//Barra de Navegação (Lembrar de arrumar uns detalhes)
 
 @Composable
 fun CustomBottomBar3(navController: NavController) {
@@ -171,7 +170,7 @@ fun CustomAlertCard3(navController: NavController) {
             Spacer(Modifier.width(8.dp))
 
             Button(
-                onClick = {navController.navigate("NewCollection")},
+                onClick = {navController.navigate("NewReminder")},
                 colors = ButtonDefaults.buttonColors(Color(0xFF615690)),
                 modifier = Modifier.align(Alignment.End)
             ) {

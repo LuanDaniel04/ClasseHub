@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
@@ -27,9 +28,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,12 +69,11 @@ fun CollectionScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CustomAlertCard2(navController)
+            //CustomAlertCard2(navController)
+            NewCollectionCard()
         }
     }
 }
-
-//Barra de Navegação (Lembrar de arrumar uns detalhes)
 
 @Composable
 fun CustomBottomBar2(navController: NavController) {
@@ -178,6 +182,35 @@ fun CustomAlertCard2(navController: NavController) {
                 Text("New Collection", color = Color.White)
             }
 
+        }
+    }
+}
+
+@Composable
+fun NewCollectionCard() {
+    val name = remember { mutableStateOf("") }
+    Card(Modifier.size(300.dp), colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F2FA))) {
+        Column(
+            Modifier.fillMaxSize().padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(Modifier.height(20.dp))
+
+             Text("New Collection", color = Color.Black, fontWeight = FontWeight.Bold)
+
+            Spacer(Modifier.height(20.dp))
+
+            OutlinedTextField(
+                value = name.value,
+                onValueChange = {newName -> name.value = newName},
+                placeholder = { Text("Nome", style = MaterialTheme.typography.bodyLarge ,color = Color(0xFF8A8A8E)) }
+            )
+
+            Spacer(Modifier.height(42.dp))
+
+            Button(onClick = {}, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF615690))) {
+                Text("Criar Coleção", style = MaterialTheme.typography.labelLarge, color = Color.White)
+            }
         }
     }
 }

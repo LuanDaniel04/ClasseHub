@@ -32,7 +32,7 @@ import androidx.navigation.NavController
 
 @Composable
 fun NewNote(navController: NavController) {
-    var noteText = remember { mutableStateOf("") }
+    val noteText = remember { mutableStateOf("") }
     Scaffold(
         topBar = {
             @OptIn(ExperimentalMaterial3Api::class)
@@ -79,10 +79,8 @@ fun NewNote(navController: NavController) {
                 CardDefaults.cardElevation(2.dp)
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.TopStart
+                    Modifier.fillMaxSize().padding(16.dp),
+                    Alignment.TopStart
                 ) {
                     OutlinedTextField(
                         value = noteText.value,
