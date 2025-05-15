@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import br.com.SylTech.screens.CollectionScreen
 import br.com.SylTech.screens.HomeScreen
 import br.com.SylTech.screens.NewNote
+import br.com.SylTech.screens.NewReminderScreen
 import br.com.SylTech.screens.ReminderScreen
 import br.com.SylTech.screens.SplashScreen
 import br.com.SylTech.ui.theme.ClasseHubTheme
@@ -43,7 +44,9 @@ class MainActivity : ComponentActivity() {
                     ReminderScreen(navController)
                 }
 
-                composable(route = "NewCollection") {} //Lembrar de criar a tela
+                composable(route = "NewReminder") {
+                    NewReminderScreen(navController)
+                }
             }
             }
         }
