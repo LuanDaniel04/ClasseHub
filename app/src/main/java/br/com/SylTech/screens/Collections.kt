@@ -30,8 +30,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +44,9 @@ import androidx.navigation.NavController
 
 @Composable
 fun CollectionScreen(navController: NavController) {
+
+    var showCard by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             CustomSearchBar()
@@ -49,7 +54,9 @@ fun CollectionScreen(navController: NavController) {
         bottomBar = { CustomBottomBar2(navController) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {
+                    showCard = !showCard
+                },
                 containerColor = Color(0xFF615690),
             ) {
                 Icon(
@@ -66,11 +73,15 @@ fun CollectionScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            //CustomAlertCard2(navController)
-            NewCollectionCard()
+            if (showCard) {
+                NewCollectionCard()
+            } else {
+                CollectionVazia(navController, onClick = {showCard = !showCard})
+              }
+            }
         }
     }
-}
+
 
 @Composable
 fun CustomBottomBar2(navController: NavController) {
@@ -138,7 +149,7 @@ fun CustomBottomBar2(navController: NavController) {
 //Card da Tela Vazia
 
 @Composable
-fun CustomAlertCard2(navController: NavController) {
+fun CollectionVazia(navController: NavController, onClick: () -> Unit ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -172,7 +183,7 @@ fun CustomAlertCard2(navController: NavController) {
             Spacer(Modifier.width(8.dp))
 
             Button(
-                onClick = {navController.navigate("NewCollection")},
+                onClick = onClick,
                 colors = ButtonDefaults.buttonColors(Color(0xFF615690)),
                 modifier = Modifier.align(Alignment.End)
             ) {

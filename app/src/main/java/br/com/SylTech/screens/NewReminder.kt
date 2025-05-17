@@ -1,5 +1,6 @@
 package br.com.SylTech.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,13 +12,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,20 +31,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import java.util.Calendar
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun NewReminderScreen(navController: NavController) {
 
-    val textReminder = remember { mutableStateOf("") }
-    val textReminder2 = remember { mutableStateOf("") }
+    var textTitle by remember { mutableStateOf("") }
+    var textNote  by  remember { mutableStateOf("") }
+    val textDate = remember { mutableStateOf("") }
+    var showDatePicker by remember { mutableStateOf(false) }
+
 
     Scaffold(
         Modifier.fillMaxSize(),
@@ -56,20 +69,18 @@ fun NewReminderScreen(navController: NavController) {
                     IconButton(onClick = {navController.popBackStack()}) {Icon(Icons.AutoMirrored.Outlined.ArrowBack,"", tint = Color(0xFFE6DEFF))}
                 }
             )
-        }
+        },
     ) {innerPadding ->
-        Column(Modifier
-            .padding(
+        Column(Modifier.padding(
                 top = innerPadding.calculateTopPadding(),
                 start = 16.dp,
                 end = 16.dp
-
-            )
-            .fillMaxSize()) {
+            ).fillMaxSize()
+        ) {
         ElevatedCard(
             Modifier
                 .fillMaxWidth()
-                .height(300.dp)
+                .height(600.dp)
                 .padding(top = 16.dp),
             colors = CardDefaults.elevatedCardColors(
                 containerColor = Color(0xFFEFE4FF)
@@ -79,9 +90,12 @@ fun NewReminderScreen(navController: NavController) {
             Column(
                 Modifier.fillMaxSize().padding(16.dp)
             ) {
+
+                // Titulo
+
                 TextField(
-                    value = textReminder.value,
-                    onValueChange = { newReminder -> textReminder.value = newReminder },
+                    value = textTitle,
+                    onValueChange = { newReminder -> textTitle = newReminder },
                     modifier = Modifier.width(400.dp),
                     label = {
                         Text(
@@ -116,9 +130,11 @@ fun NewReminderScreen(navController: NavController) {
 
                 Spacer(Modifier.height(8.dp))
 
+                //Anotação
+
                 TextField(
-                    value = textReminder2.value,
-                    onValueChange = {newReminder -> textReminder.value = newReminder},
+                    value = textNote,
+                    onValueChange = {newReminder -> textNote = newReminder},
                     modifier = Modifier.size(400.dp, 100.dp),
                     label = {
                         Text(
@@ -129,7 +145,7 @@ fun NewReminderScreen(navController: NavController) {
                     },
                     placeholder = {
                         Text(
-                            "reminder description",
+                            "Reminder description",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color(0xFF8A8A8E)
                         )
@@ -150,10 +166,14 @@ fun NewReminderScreen(navController: NavController) {
                         errorTextColor = Color.Black
                     )
                 )
+
                 Spacer(Modifier.height(8.dp))
+
+                //Data
+
                 TextField(
-                    value = textReminder2.value,
-                    onValueChange = {newReminder -> textReminder.value = newReminder},
+                    value = textDate.value,
+                    onValueChange = {newReminder -> textDate.value = newReminder},
                     modifier = Modifier.width(400.dp),
                     label = {
                         Text(
@@ -169,6 +189,53 @@ fun NewReminderScreen(navController: NavController) {
                             color = Color(0xFF8A8A8E)
                         )
                     },
+                    trailingIcon = { IconButton(
+                        onClick = {
+                            showDatePicker = true
+                        }
+                    ) {
+                        Icon(Icons.Outlined.DateRange, "", tint = Color(0xFF48454E))
+                    } },
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+
+                        focusedLabelColor = Color.Black,
+                        unfocusedLabelColor = Color.Black,
+
+                        focusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Red,
+
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        errorTextColor = Color.Black
+                    ),
+                    readOnly = true,
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                //Horas
+
+                TextField(
+                    value = textTitle,
+                    onValueChange = { newReminder -> textTitle = newReminder },
+                    modifier = Modifier.width(400.dp),
+                    label = {
+                        Text(
+                            "Title",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Black
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            "Write your title",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF8A8A8E)
+                        )
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
@@ -185,14 +252,65 @@ fun NewReminderScreen(navController: NavController) {
                         errorTextColor = Color.Black
                     )
                 )
-            }
-          }
-            Button(onClick = {}, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF615690)), modifier = Modifier.width(500.dp)) {
-                Row {
-                    Icon(Icons.Outlined.Done, "", tint = Color.White)
-                    Text("Set Reminder", style = MaterialTheme.typography.labelLarge, color = Color.White)
+
+                Spacer(Modifier.height(200.dp))
+
+                Button(onClick = {}, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF615690)), modifier = Modifier.width(400.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Outlined.Done, "", tint = Color.White)
+
+                        Spacer(Modifier.width(4.dp))
+
+                        Text("Set Reminder", style = MaterialTheme.typography.bodyLarge, color = Color.White)
+                    }
                 }
+
+            } //Fechamento Column do Card
+          } //Fechamento elevatedcard
+            if (showDatePicker) {
+                DatePickerModal(
+                    onDateSelected = {
+                        millis -> millis?.let {
+                            val calendar = Calendar.getInstance()
+                        calendar.timeInMillis = it
+                        val day = calendar.get(Calendar.DAY_OF_MONTH) + 1
+                        val month = calendar.get(Calendar.MONTH) + 1
+                        val year = calendar.get(Calendar.YEAR)
+                        textDate.value = String.format("%02d/%02d/%04d", day, month, year)
+                    }
+                        showDatePicker = false
+                    },
+                    onDismiss = { showDatePicker = false}
+                )
+            } //Fechamento IF
+        } //Fechamento Coluna
+    } //Fechamento Scaffold
+} // Fechamento fun
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text("Cancel")
             }
         }
+    ) {
+        DatePicker(state = datePickerState)
     }
 }
