@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -53,6 +54,10 @@ import br.com.SylTech.R
 
 @Composable
 fun HomeScreen(navController: NavController) {
+
+    val zoando = 1
+    val zoado = 0
+
     Scaffold(
         topBar = {
             CustomSearchBar()
@@ -72,16 +77,24 @@ fun HomeScreen(navController: NavController) {
             }
         }
     ) { innerPadding ->
+        if (zoando >= zoado) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
+            ) {
+                items(20) {
+                    ContentCard()
+                }
+            }
+        }
+        else {
         Column(
             modifier = Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            //verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center
         ) {
-
-            //CustomAlertCard(navController)
-
-            ContentCard()
+            CustomAlertCard(navController)
         }
+            }
     }
 }
 
@@ -236,7 +249,7 @@ val query = remember { mutableStateOf("") }
 @Composable
 fun ContentCard() {
     ElevatedCard(
-        Modifier.fillMaxWidth(),
+        Modifier.fillMaxWidth().padding(4.dp),
         RoundedCornerShape(6.dp),
         CardDefaults.elevatedCardColors(
             containerColor = Color(0xFFF7F2FA)
