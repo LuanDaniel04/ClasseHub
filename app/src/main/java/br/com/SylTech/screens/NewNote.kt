@@ -46,7 +46,7 @@ fun NewNote(navController: NavController) {
         topBar = {
             @OptIn(ExperimentalMaterial3Api::class)
             CenterAlignedTopAppBar(
-                title = { Text("New Reminder") },
+                title = { Text("New Note") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF615690),
                     titleContentColor = Color(0xFFE6DEFF),
