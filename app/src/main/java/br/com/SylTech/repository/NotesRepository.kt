@@ -12,7 +12,8 @@ class NotesRepository(context: Context) {
 
     fun Create(notes: Notes) : Long {
         val values = ContentValues().apply {
-            put("note", notes.note)
+            put("titulo", notes.title)
+            put("lembrete", notes.note)
         }
         return database.insert(TABLE,null,values)
     }

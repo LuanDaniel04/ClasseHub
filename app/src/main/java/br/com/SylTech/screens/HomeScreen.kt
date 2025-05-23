@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,18 +44,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.com.SylTech.R
+import br.com.SylTech.model.Notes
+import br.com.SylTech.repository.NotesRepository
 
 @Composable
 fun HomeScreen(navController: NavController) {
-
-    val zoando = 1
-    val zoado = 0
+    val listOfNotes = NotesRepository(LocalContext.current).Read()
 
     Scaffold(
         topBar = {
@@ -77,23 +77,24 @@ fun HomeScreen(navController: NavController) {
             }
         }
     ) { innerPadding ->
-        if (zoando >= zoado) {
-            LazyColumn(
+        if (listOfNotes.isEmpty()) {
+            Column(
                 modifier = Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                items(20) {
-                    ContentCard()
-                }
+                CustomAlertCard(navController)
             }
         }
         else {
-        Column(
-            modifier = Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CustomAlertCard(navController)
-        }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
+            ) {
+                items(listOfNotes.size) { index ->
+                    val notes: Notes = listOfNotes[index]
+                    ContentCard(notes)
+                }
+            }
             }
     }
 }
@@ -161,7 +162,7 @@ fun CustomBottomBar(navController: NavController) {
     }
 }
 
-//Card da Tela Vazia
+
 
 @Composable
 fun CustomAlertCard(navController: NavController) {
@@ -221,7 +222,7 @@ fun CustomAlertCard(navController: NavController) {
     }
 }
 
-//Barra de Pesquisa
+
 @Composable
 fun CustomSearchBar() {
 val query = remember { mutableStateOf("") }
@@ -233,13 +234,17 @@ val query = remember { mutableStateOf("") }
         singleLine = true,
         shape = RoundedCornerShape(50),
         colors = TextFieldDefaults.colors(
+
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
+
             focusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             errorIndicatorColor = Color.Transparent,
+
             focusedTextColor = Color.Black,
+
             cursorColor = Color(0xFFE6DEFF)
         ),
         trailingIcon = { IconButton(onClick = {}) { Icon(Icons.Outlined.Search, null, )}}
@@ -247,7 +252,7 @@ val query = remember { mutableStateOf("") }
 }
 
 @Composable
-fun ContentCard() {
+fun ContentCard(notes: Notes) {
     ElevatedCard(
         Modifier.fillMaxWidth().padding(4.dp),
         RoundedCornerShape(6.dp),
@@ -256,20 +261,22 @@ fun ContentCard() {
         ),
         CardDefaults.cardElevation(4.dp)
     ) {
-        Row() {
+        Row {
             Box(
                 Modifier.padding(12.dp).clip(shape = CircleShape).background(Color(0xFFE6DEFF)).size(50.dp),
                 Alignment.Center,
             ) {
 
-                Text("L", style = MaterialTheme.typography.bodySmall, color = Color.Black)
+                Text(notes.title.firstOrNull()?.uppercaseChar()?.toString() ?: "", style = MaterialTheme.typography.bodySmall, color = Color.Black)
             }
-            Column(Modifier.padding(8.dp)) {
-                Text("Header", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = Color.Black)
+            Column(Modifier.padding(8.dp).weight(1f)) {
+
+                Text(notes.title, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = Color.Black, maxLines = 1)
+
                 Spacer(Modifier.height(4.dp))
-                Text("Subhead", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium, color = Color.Black)
+                Text(notes.note, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium, color = Color.Black, maxLines = 1)
+
             }
-            Spacer(Modifier.width(160.dp))
             Image(painterResource(R.drawable.livro), "", Modifier.size(80.dp))
         }
     }
