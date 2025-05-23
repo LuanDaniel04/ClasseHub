@@ -247,7 +247,7 @@ val query = remember { mutableStateOf("") }
 
             cursorColor = Color(0xFFE6DEFF)
         ),
-        trailingIcon = { IconButton(onClick = {}) { Icon(Icons.Outlined.Search, null, )}}
+        trailingIcon = { IconButton(onClick = {}) { Icon(Icons.Outlined.Search, null)}}
     )
 }
 
