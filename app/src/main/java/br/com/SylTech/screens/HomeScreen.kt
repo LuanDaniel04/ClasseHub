@@ -2,6 +2,7 @@ package br.com.SylTech.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,13 +53,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.com.SylTech.R
 import br.com.SylTech.model.Notes
+import br.com.SylTech.model.NotesViewModel
 import br.com.SylTech.repository.NotesRepository
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, viewModel: NotesViewModel) {
+
     val listOfNotes = NotesRepository(LocalContext.current).Read()
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Color(0xFFE6DEFF),
         topBar = {
             CustomSearchBar()
                  },
@@ -79,7 +84,7 @@ fun HomeScreen(navController: NavController) {
     ) { innerPadding ->
         if (listOfNotes.isEmpty()) {
             Column(
-                modifier = Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
+                modifier = Modifier.fillMaxSize().padding(innerPadding),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -92,7 +97,7 @@ fun HomeScreen(navController: NavController) {
             ) {
                 items(listOfNotes.size) { index ->
                     val notes: Notes = listOfNotes[index]
-                    ContentCard(notes)
+                    ContentCard(notes,viewModel,navController)
                 }
             }
             }
@@ -252,21 +257,23 @@ val query = remember { mutableStateOf("") }
 }
 
 @Composable
-fun ContentCard(notes: Notes) {
+fun ContentCard(notes: Notes,viewModel: NotesViewModel, navController: NavController) {
     ElevatedCard(
-        Modifier.fillMaxWidth().padding(4.dp),
+        Modifier.fillMaxWidth().padding(4.dp).clickable {
+            viewModel.select(notes)
+            navController.navigate("ReadNote")
+        },
         RoundedCornerShape(6.dp),
         CardDefaults.elevatedCardColors(
             containerColor = Color(0xFFF7F2FA)
         ),
-        CardDefaults.cardElevation(4.dp)
+        CardDefaults.cardElevation(4.dp),
     ) {
         Row {
             Box(
                 Modifier.padding(12.dp).clip(shape = CircleShape).background(Color(0xFFE6DEFF)).size(50.dp),
                 Alignment.Center,
             ) {
-
                 Text(notes.title.firstOrNull()?.uppercaseChar()?.toString() ?: "", style = MaterialTheme.typography.bodySmall, color = Color.Black)
             }
             Column(Modifier.padding(8.dp).weight(1f)) {

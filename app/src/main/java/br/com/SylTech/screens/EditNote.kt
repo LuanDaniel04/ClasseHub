@@ -31,14 +31,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import br.com.SylTech.model.Notes
+import br.com.SylTech.model.NotesViewModel
 import br.com.SylTech.repository.NotesRepository
 
 @Composable
-fun NewNote(navController: NavController) {
+fun EditNoteScreen(navController: NavController,viewModel: NotesViewModel) {
 
-    var titleText by remember { mutableStateOf("") }
-    var noteText by remember { mutableStateOf("") }
+    val note = viewModel.notes!!
+    val context = LocalContext.current
+
+    var titleText by remember { mutableStateOf(note.title) }
+    var noteText by remember { mutableStateOf(note.note) }
     var titleError by remember { mutableStateOf(false) }
     var noteError by remember { mutableStateOf(false) }
 
@@ -46,7 +49,7 @@ fun NewNote(navController: NavController) {
         topBar = {
             @OptIn(ExperimentalMaterial3Api::class)
             CenterAlignedTopAppBar(
-                title = { Text("New Note") },
+                title = { Text("Edit Note") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF615690),
                     titleContentColor = Color(0xFFE6DEFF),
@@ -62,7 +65,6 @@ fun NewNote(navController: NavController) {
         },
         containerColor = Color(0xFFE6DEFF),
         floatingActionButton = {
-            val context = LocalContext.current
             FloatingActionButton(
                 onClick = {
 
@@ -74,17 +76,19 @@ fun NewNote(navController: NavController) {
 
                     if (titleValid && noteValid) {
                         val repository = NotesRepository(context)
-                        val notes = Notes(
+                        val updatedNote = note.copy(
                             title = titleText.trim(),
                             note = noteText.trim(),
                         )
-                        val result = repository.Create(notes)
+                        val result = repository.Update(updatedNote)
                         if (result > 0) {
-                            navController.popBackStack()
+                            navController.navigate("Home") {
+                                popUpTo("Home")
+                            }
                         }
                     }
 
-                          },
+                },
                 elevation = FloatingActionButtonDefaults.elevation(6.dp),
                 containerColor = Color(0xFF615690)
             ) {

@@ -62,7 +62,7 @@ fun ReminderScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CustomAlertCard3(navController)
+            CustomEmptyReminder(navController)
         }
     }
 }
@@ -134,7 +134,7 @@ fun CustomBottomBar3(navController: NavController) {
 //Card da Tela Vazia
 
 @Composable
-fun CustomAlertCard3(navController: NavController) {
+fun CustomEmptyReminder(navController: NavController) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),

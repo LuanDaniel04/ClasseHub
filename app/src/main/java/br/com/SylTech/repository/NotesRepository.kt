@@ -33,4 +33,18 @@ class NotesRepository(context: Context) {
         cursor.close()
         return notas
     }
+
+    fun Update(notes: Notes):Int {
+        val values = ContentValues().apply {
+            put("titulo", notes.title)
+            put("lembrete", notes.note)
+        }
+        return database.update(TABLE,values,"id = ?", arrayOf(notes.id.toString()))
+    }
+
+    fun Delete(id:Long):Int {
+        return database.delete(TABLE,"id=?", arrayOf(id.toString()))
+    }
+
+
 }

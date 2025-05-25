@@ -51,7 +51,7 @@ fun CollectionScreen(navController: NavController) {
         topBar = {
             CustomSearchBar()
         },
-        bottomBar = { CustomBottomBar2(navController) },
+        bottomBar = { CustomCollectionBar(navController) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -76,7 +76,7 @@ fun CollectionScreen(navController: NavController) {
             if (showCard) {
                 NewCollectionCard()
             } else {
-                CollectionVazia(navController, onClick = {showCard = !showCard})
+                CollectionVazia(onClick = {showCard = !showCard})
               }
             }
         }
@@ -84,7 +84,7 @@ fun CollectionScreen(navController: NavController) {
 
 
 @Composable
-fun CustomBottomBar2(navController: NavController) {
+fun CustomCollectionBar(navController: NavController) {
     BottomAppBar(
         containerColor = Color(0xFF615690),
         contentPadding = PaddingValues(horizontal = 10.dp)
@@ -149,7 +149,7 @@ fun CustomBottomBar2(navController: NavController) {
 //Card da Tela Vazia
 
 @Composable
-fun CollectionVazia(navController: NavController, onClick: () -> Unit ) {
+fun CollectionVazia(onClick: () -> Unit ) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
