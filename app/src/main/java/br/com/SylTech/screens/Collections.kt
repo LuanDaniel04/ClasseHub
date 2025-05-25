@@ -97,7 +97,9 @@ fun CustomCollectionBar(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Home")
+                navController.navigate("Home") {
+                    popUpTo("Collections") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Home, null,Modifier.size(35.dp), Color.Black)
             }
@@ -115,7 +117,9 @@ fun CustomCollectionBar(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Collections")
+                navController.navigate("Collections") {
+                    popUpTo("Collections") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Star, null, Modifier.size(35.dp),Color(0xFFE6DEFF))
             }
@@ -133,7 +137,9 @@ fun CustomCollectionBar(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Reminder")
+                navController.navigate("Reminder") {
+                    popUpTo("Collections") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Notifications, null, Modifier.size(35.dp), Color.Black)
             }

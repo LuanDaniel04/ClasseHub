@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
             ClasseHubTheme {
             NavHost(
                 navController = navController,
-                startDestination = "Home"
+                startDestination = "Splash"
             ) {
                 composable(route = "Splash") {
                     SplashScreen(navController)

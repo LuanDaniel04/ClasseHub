@@ -118,7 +118,9 @@ fun CustomBottomBar(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Home")
+                navController.navigate("Home") {
+                    popUpTo("Home") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Home, null,Modifier.size(35.dp), Color(0xFFE6DEFF))
             }
@@ -136,7 +138,9 @@ fun CustomBottomBar(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Collections")
+                navController.navigate("Collections") {
+                    popUpTo("Home") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Star, null, Modifier.size(35.dp),Color.Black)
             }
@@ -154,7 +158,9 @@ fun CustomBottomBar(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Reminder")
+                navController.navigate("Reminder") {
+                    popUpTo("Home") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Notifications, null, Modifier.size(35.dp), Color.Black)
             }
@@ -217,7 +223,9 @@ fun CustomAlertCard(navController: NavController) {
                 }
                 Spacer(modifier = Modifier.padding(2.dp))
                 Button(
-                    onClick = {},
+                    onClick = {
+                        navController.navigate("NewReminder")
+                    },
                     colors = ButtonDefaults.buttonColors(Color(0xFF615690)),
                 ) {
                     Text("New Reminder", color = Color.White)

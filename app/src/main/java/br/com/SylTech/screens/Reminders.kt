@@ -42,7 +42,7 @@ fun ReminderScreen(navController: NavController) {
         topBar = {
             CustomSearchBar()
         },
-        bottomBar = { CustomBottomBar3(navController) },
+        bottomBar = { CustomReminderBar(navController) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {navController.navigate("NewReminder")},
@@ -69,7 +69,7 @@ fun ReminderScreen(navController: NavController) {
 
 
 @Composable
-fun CustomBottomBar3(navController: NavController) {
+fun CustomReminderBar(navController: NavController) {
     BottomAppBar(
         containerColor = Color(0xFF615690),
         contentPadding = PaddingValues(horizontal = 10.dp)
@@ -82,7 +82,9 @@ fun CustomBottomBar3(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Home")
+                navController.navigate("Home") {
+                    popUpTo("Reminder") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Home, null,Modifier.size(35.dp), Color.Black)
             }
@@ -100,7 +102,9 @@ fun CustomBottomBar3(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Collections")
+                navController.navigate("Collections") {
+                    popUpTo("Reminder") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Star, null, Modifier.size(35.dp),Color.Black)
             }
@@ -118,7 +122,9 @@ fun CustomBottomBar3(navController: NavController) {
                 .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
-                navController.navigate("Reminders")
+                navController.navigate("Reminder") {
+                    popUpTo("Reminder") { inclusive = true }
+                }
             }) {
                 Icon(Icons.Outlined.Notifications, null, Modifier.size(35.dp), Color(0xFFE6DEFF))
             }
