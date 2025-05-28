@@ -132,7 +132,7 @@ fun NewReminderScreen(navController: NavController) {
 
                 TextField(
                     value = textNote,
-                    onValueChange = {newReminder -> textNote = newReminder},
+                    onValueChange = {newNote -> textNote = newNote},
                     modifier = Modifier.size(400.dp, 100.dp),
                     label = {
                         Text(

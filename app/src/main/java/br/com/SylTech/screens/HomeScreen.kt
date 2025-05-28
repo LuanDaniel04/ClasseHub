@@ -84,16 +84,16 @@ fun HomeScreen(navController: NavController, viewModel: NotesViewModel) {
     ) { innerPadding ->
         if (listOfNotes.isEmpty()) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                Modifier.fillMaxSize().padding(innerPadding),
+                Arrangement.Center,
+                Alignment.CenterHorizontally
             ) {
                 CustomAlertCard(navController)
             }
         }
         else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
+                Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
             ) {
                 items(listOfNotes.size) { index ->
                     val notes: Notes = listOfNotes[index]
@@ -112,10 +112,8 @@ fun CustomBottomBar(navController: NavController) {
     ) {
         //Icon1
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
+            Modifier.weight(1f).padding(horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             IconButton(onClick = {
                 navController.navigate("Home") {
@@ -132,10 +130,9 @@ fun CustomBottomBar(navController: NavController) {
         }
         //Icon2
         Column(
+            Modifier.weight(1f).padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
+
         ) {
             IconButton(onClick = {
                 navController.navigate("Collections") {
@@ -144,18 +141,12 @@ fun CustomBottomBar(navController: NavController) {
             }) {
                 Icon(Icons.Outlined.Star, null, Modifier.size(35.dp),Color.Black)
             }
-            Text(
-                text = "Collections",
-                color = Color.Black,
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text("Collections", color = Color.Black, style = MaterialTheme.typography.bodySmall )
         }
         //Icon3
         Column(
+            Modifier.weight(1f).padding(horizontal = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 8.dp)
         ) {
             IconButton(onClick = {
                 navController.navigate("Reminder") {
@@ -164,16 +155,10 @@ fun CustomBottomBar(navController: NavController) {
             }) {
                 Icon(Icons.Outlined.Notifications, null, Modifier.size(35.dp), Color.Black)
             }
-            Text(
-                text = "Reminders",
-                color = Color.Black,
-                style = MaterialTheme.typography.bodySmall
-            )
+            Text("Reminders", color = Color.Black, style = MaterialTheme.typography.bodySmall)
         }
     }
 }
-
-
 
 @Composable
 fun CustomAlertCard(navController: NavController) {
