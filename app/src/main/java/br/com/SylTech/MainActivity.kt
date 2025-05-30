@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import br.com.SylTech.model.Colecao
 import br.com.SylTech.model.CollectionViewModel
 import br.com.SylTech.screens.CollectionScreen
 import br.com.SylTech.screens.HomeScreen
@@ -28,8 +29,6 @@ class MainActivity : ComponentActivity() {
 
             val navController = rememberNavController()
             val viewModel: NotesViewModel = viewModel()
-            val viewModelC: CollectionViewModel = viewModel()
-
 
             ClasseHubTheme {
             NavHost(
@@ -47,7 +46,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable(route = "Collections") {
-                    CollectionScreen(navController, viewModelC)
+                    CollectionScreen(navController)
                 }
 
                 composable(route = "Reminder") {

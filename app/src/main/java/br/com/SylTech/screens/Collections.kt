@@ -1,13 +1,20 @@
 package br.com.SylTech.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.Home
@@ -17,7 +24,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
@@ -36,20 +42,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import br.com.SylTech.R
 import br.com.SylTech.model.Colecao
 import br.com.SylTech.model.CollectionViewModel
 import br.com.SylTech.repository.CollectionRepository
 
 @Composable
-fun CollectionScreen(navController: NavController, viewModel: CollectionViewModel) {
+fun CollectionScreen(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
     var titleError by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val listOfCollections = CollectionRepository(context).Read()
+
 
     Scaffold(
         topBar = { CustomSearchBar() },
@@ -67,59 +76,54 @@ fun CollectionScreen(navController: NavController, viewModel: CollectionViewMode
             }
         }
     ) { innerPadding ->
-        Column(
-            Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
-             Arrangement.Center,
-             Alignment.CenterHorizontally,
-        ) {
-            if (showDialog) {
-                CustomAlertDialog(
-                    title = "New Collection",
-                    onDismissRequest = { showDialog = false },
-                    onConfirm = { newTitle ->
-                        val titleValid = newTitle.trim().isNotEmpty()
-                        titleError = !titleValid
-
-                        if (titleValid) {
-                            val repository = CollectionRepository(context)
-                            val collection = Colecao(titulo = newTitle.trim())
-                            val result = repository.Create(collection)
-                            if (result > 0) {
-                                showDialog = false
-                                navController.navigate("Collections") {
+                if (listOfCollections.isEmpty()) {
+                        Column(
+                            Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
+                            Arrangement.Center,
+                            Alignment.CenterHorizontally
+                            ) { CollectionVazia(onClick = { showDialog = true }) }
+                } else {
+                    LazyColumn(Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding)) {
+                        //Em desenvolvimento
+                        items(listOfCollections.size) { index ->
+                            val collection: Colecao = listOfCollections[index]
+                            CollectionCard(collection = collection) { collectionDelete ->
+                                CollectionRepository(context).Delete(collectionDelete.id!!)
+                                navController.navigate("Home") {
                                     popUpTo("Collections") { inclusive = true }
                                 }
                             }
-                        }
+
                     }
-                )
-            } else {
-
-                if (listOfCollections.isEmpty()) {
-                    CollectionVazia(onClick = { showDialog = true })
-
-                } else {
-                    //Em desenvolvimento
-                   Card(
-                       Modifier.size(400.dp).padding(12.dp),
-                       colors = CardDefaults.cardColors(containerColor = Color.White),
-                   ) {
-                       Column(
-                           Modifier.fillMaxSize().padding(16.dp),
-                           Arrangement.Center,
-                           Alignment.CenterHorizontally
-                       ) {
-                           listOfCollections.forEach { colecao ->
-                               Text(colecao.titulo, color = Color.Black, fontWeight = FontWeight.Bold)
-                           }
-                       }
-
+                   }
                    }
                 }
+    if (showDialog) {
+        CustomAlertDialog(
+            title = "New Collection",
+            onDismissRequest = { showDialog = false },
+            onConfirm = { newTitle ->
+                val titleValid = newTitle.trim().isNotEmpty()
+                titleError = !titleValid
+
+                if (titleValid) {
+                    val repository = CollectionRepository(context)
+                    val collection = Colecao(titulo = newTitle.trim())
+                    val result = repository.Create(collection)
+                    if (result > 0) {
+                        showDialog = false
+                        navController.navigate("Collections") {
+                            popUpTo("Collections") { inclusive = true }
+                        }
+                    }
+                }
             }
-        }
+        )
     }
 }
+
+
+
 
 @Composable
 fun CustomCollectionBar(navController: NavController) {
@@ -241,7 +245,7 @@ fun CustomAlertDialog(
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Text(title) },
+        title = { Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.Black) },
         text = {
             OutlinedTextField(
                 value = collectionName,
@@ -250,15 +254,44 @@ fun CustomAlertDialog(
             )
         },
         confirmButton = {
-            Button(onClick = { onConfirm(collectionName) }) {
-                Text("Confirm")
+            Button(
+                onClick = { onConfirm(collectionName) },
+                colors = ButtonDefaults.buttonColors(Color(0xFF6750A4))
+            ) {
+                Text("Confirm", color = Color.White)
             }
         },
         dismissButton = {
-            Button(onClick = onDismissRequest) {
-                Text("Cancel")
+            Button(
+                onClick = onDismissRequest,
+                colors = ButtonDefaults.buttonColors(Color(0xFF6750A4))
+            ) {
+                Text("Cancel", color = Color.White)
             }
-        }
+        },
+        containerColor = Color(0xFFECE6F0)
     )
+}
+
+@Composable
+fun CollectionCard(collection: Colecao, delete: (Colecao) -> Unit) {
+    ElevatedCard(
+        Modifier.fillMaxWidth().padding(4.dp).clickable { delete(collection)},
+        RoundedCornerShape(6.dp),
+        CardDefaults.elevatedCardColors(
+            containerColor = Color(0xFFF7F2FA)
+        ),
+        CardDefaults.cardElevation(4.dp),
+    ) {
+        Row {
+            Column(Modifier.padding(8.dp).weight(1f)) {
+                Text(collection.titulo, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = Color.Black, maxLines = 1)
+                Spacer(Modifier.height(4.dp))
+                Text("5", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium, color = Color.Black, maxLines = 1)
+
+            }
+            Image(painterResource(R.drawable.capa_3), "", Modifier.size(80.dp))
+        }
+    }
 }
 

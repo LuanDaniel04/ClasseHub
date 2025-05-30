@@ -50,7 +50,7 @@ fun NoteDetailScreen(navController: NavController, viewModel: NotesViewModel) {
     var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        Modifier.fillMaxSize(),
         containerColor = Color(0xFFE6DEFF),
         topBar = {
             CenterAlignedTopAppBar(
@@ -180,9 +180,7 @@ fun CustomAlertDialog(
         dismissButton = {
             Button(
                 onClick = onDismissRequest,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6750A4)
-                )
+                colors = ButtonDefaults.buttonColors(Color(0xFF6750A4))
 
             ) {
                 Text("Cancel", color = Color.White)
