@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,14 +59,20 @@ import br.com.SylTech.repository.NotesRepository
 
 @Composable
 fun HomeScreen(navController: NavController, viewModel: NotesViewModel) {
+    val context = LocalContext.current
+    val listOfNotes = NotesRepository(context).Read()
+    val query = remember { mutableStateOf("") }
+    val filteredNotes = listOfNotes.filter {
+        it.title.contains(query.value, ignoreCase = true) ||
+        it.note.contains(query.value, ignoreCase = true)
+    }
 
-    val listOfNotes = NotesRepository(LocalContext.current).Read()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color(0xFFE6DEFF),
         topBar = {
-            CustomSearchBar()
+            CustomSearchBar(query)
                  },
         bottomBar = { CustomBottomBar(navController) },
         floatingActionButton = {
@@ -82,7 +89,7 @@ fun HomeScreen(navController: NavController, viewModel: NotesViewModel) {
             }
         }
     ) { innerPadding ->
-        if (listOfNotes.isEmpty()) {
+        if (filteredNotes.isEmpty()) {
             Column(
                 Modifier.fillMaxSize().padding(innerPadding),
                 Arrangement.Center,
@@ -95,8 +102,8 @@ fun HomeScreen(navController: NavController, viewModel: NotesViewModel) {
             LazyColumn(
                 Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
             ) {
-                items(listOfNotes.size) { index ->
-                    val notes: Notes = listOfNotes[index]
+                items(filteredNotes.size) { index ->
+                    val notes: Notes = filteredNotes[index]
                     ContentCard(notes,viewModel,navController)
                 }
             }
@@ -222,8 +229,7 @@ fun CustomAlertCard(navController: NavController) {
 
 
 @Composable
-fun CustomSearchBar() {
-val query = remember { mutableStateOf("") }
+fun CustomSearchBar(query: MutableState<String>) {
     TextField(
         value = query.value,
         onValueChange = {newQuery -> query.value = newQuery},

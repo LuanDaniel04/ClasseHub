@@ -41,6 +41,7 @@ fun NewNote(navController: NavController) {
     var noteText by remember { mutableStateOf("") }
     var titleError by remember { mutableStateOf(false) }
     var noteError by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -62,7 +63,7 @@ fun NewNote(navController: NavController) {
         },
         containerColor = Color(0xFFE6DEFF),
         floatingActionButton = {
-            val context = LocalContext.current
+
             FloatingActionButton(
                 onClick = {
 

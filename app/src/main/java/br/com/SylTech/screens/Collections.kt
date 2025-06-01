@@ -31,8 +31,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.com.SylTech.R
 import br.com.SylTech.model.Colecao
-import br.com.SylTech.model.CollectionViewModel
 import br.com.SylTech.repository.CollectionRepository
 
 @Composable
@@ -58,10 +59,12 @@ fun CollectionScreen(navController: NavController) {
     var titleError by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val listOfCollections = CollectionRepository(context).Read()
+    val query = remember { mutableStateOf("") }
+    val filteredColletions = listOfCollections.filter { it.titulo.contains(query.value, ignoreCase = true) }
 
 
     Scaffold(
-        topBar = { CustomSearchBar() },
+        topBar = { CustomSearchBar(query) },
         bottomBar = { CustomCollectionBar(navController) },
         floatingActionButton = {
             FloatingActionButton(
@@ -76,17 +79,23 @@ fun CollectionScreen(navController: NavController) {
             }
         }
     ) { innerPadding ->
-                if (listOfCollections.isEmpty()) {
+                if (filteredColletions.isEmpty()) {
                         Column(
-                            Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding),
+                            Modifier
+                                .fillMaxSize()
+                                .background(Color(0xFFE6DEFF))
+                                .padding(innerPadding),
                             Arrangement.Center,
                             Alignment.CenterHorizontally
                             ) { CollectionVazia(onClick = { showDialog = true }) }
                 } else {
-                    LazyColumn(Modifier.fillMaxSize().background(Color(0xFFE6DEFF)).padding(innerPadding)) {
-                        //Em desenvolvimento
-                        items(listOfCollections.size) { index ->
-                            val collection: Colecao = listOfCollections[index]
+                    LazyColumn(Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFE6DEFF))
+                        .padding(innerPadding)) {
+                        //Em Desenvolvimento
+                        items(filteredColletions.size) { index ->
+                            val collection: Colecao = filteredColletions[index]
                             CollectionCard(collection = collection) { collectionDelete ->
                                 CollectionRepository(context).Delete(collectionDelete.id!!)
                                 navController.navigate("Home") {
@@ -250,7 +259,26 @@ fun CustomAlertDialog(
             OutlinedTextField(
                 value = collectionName,
                 onValueChange = { collectionName = it },
-                placeholder = { Text("Collection Name") }
+                placeholder = { Text("Collection Name", color = Color.Black) },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    errorContainerColor = Color(0xFFFFDAD6),
+
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black,
+                    errorTextColor = Color.Black,
+
+                    cursorColor = Color(0xFF615690),
+                    errorCursorColor = Color(0xFFBA1A1A),
+
+                    focusedIndicatorColor = Color.Black,
+                    unfocusedIndicatorColor = Color.Black,
+                    errorIndicatorColor = Color(0xFFBA1A1A),
+
+                    errorPlaceholderColor = Color(0xFFBA1A1A)
+                ),
             )
         },
         confirmButton = {
@@ -276,20 +304,22 @@ fun CustomAlertDialog(
 @Composable
 fun CollectionCard(collection: Colecao, delete: (Colecao) -> Unit) {
     ElevatedCard(
-        Modifier.fillMaxWidth().padding(4.dp).clickable { delete(collection)},
+        Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+            .clickable { delete(collection) },
         RoundedCornerShape(6.dp),
         CardDefaults.elevatedCardColors(
             containerColor = Color(0xFFF7F2FA)
         ),
         CardDefaults.cardElevation(4.dp),
     ) {
-        Row {
-            Column(Modifier.padding(8.dp).weight(1f)) {
-                Text(collection.titulo, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = Color.Black, maxLines = 1)
-                Spacer(Modifier.height(4.dp))
-                Text("5", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium, color = Color.Black, maxLines = 1)
-
-            }
+        Row(
+            Modifier.fillMaxSize().padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(collection.titulo, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium, color = Color.Black, maxLines = 1)
+            Spacer(Modifier.weight(1f))
             Image(painterResource(R.drawable.capa_3), "", Modifier.size(80.dp))
         }
     }

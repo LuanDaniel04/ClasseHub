@@ -1,5 +1,6 @@
 package br.com.SylTech.screens
 
+import android.app.TimePickerDialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -38,9 +40,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import br.com.SylTech.repository.ReminderRepository
 import java.util.Calendar
+import java.util.TimeZone
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,8 +53,11 @@ fun NewReminderScreen(navController: NavController) {
 
     var textTitle by remember { mutableStateOf("") }
     var textNote  by  remember { mutableStateOf("") }
-    val textDate = remember { mutableStateOf("") }
+    var textDate by remember { mutableStateOf("") }
+    var textTime by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
 
     Scaffold(
@@ -170,8 +178,8 @@ fun NewReminderScreen(navController: NavController) {
                 //Data
 
                 TextField(
-                    value = textDate.value,
-                    onValueChange = {newReminder -> textDate.value = newReminder},
+                    value = textDate,
+                    onValueChange = {textDate = it},
                     modifier = Modifier.width(400.dp),
                     label = {
                         Text(
@@ -217,22 +225,19 @@ fun NewReminderScreen(navController: NavController) {
                 //Horas
 
                 TextField(
-                    value = textTitle,
-                    onValueChange = { newReminder -> textTitle = newReminder },
+                    value = textTime,
+                    onValueChange = { textTime = it },
                     modifier = Modifier.width(400.dp),
                     label = {
-                        Text(
-                            "Title",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Black
-                        )
+                        Text("Time", style = MaterialTheme.typography.bodySmall, color = Color.Black)
                     },
                     placeholder = {
-                        Text(
-                            "Write your title",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF8A8A8E)
-                        )
+                        Text("11:30", style = MaterialTheme.typography.bodySmall, color = Color(0xFF8A8A8E))
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { showTimePicker = true }) {
+                            Icon(Icons.Outlined.DateRange, "", tint = Color(0xFF48454E))
+                        }
                     },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
@@ -248,12 +253,25 @@ fun NewReminderScreen(navController: NavController) {
                         focusedTextColor = Color.Black,
                         unfocusedTextColor = Color.Black,
                         errorTextColor = Color.Black
-                    )
+                    ),
+                    readOnly = true
                 )
 
                 Spacer(Modifier.height(200.dp))
 
-                Button(onClick = {}, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF615690)), modifier = Modifier.width(400.dp)) {
+                Button(onClick = {
+                    val repository = ReminderRepository(context)
+                    val reminder = br.com.SylTech.model.Reminder(
+                        titulo = textTitle,
+                        nota = textNote,
+                        data = textDate,
+                        hora = textTime
+                    )
+                    val result = repository.Create(reminder)
+                    if (result > 0) {
+                        navController.popBackStack()
+                    }
+                }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF615690)), modifier = Modifier.width(400.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Outlined.Done, "", tint = Color.White)
 
@@ -263,31 +281,46 @@ fun NewReminderScreen(navController: NavController) {
                     }
                 }
 
-            } //Fechamento Column do Card
-          } //Fechamento elevatedcard
+            }
+          }
+
             if (showDatePicker) {
-                DatePickerModal(
+                Data(
                     onDateSelected = {
                         millis -> millis?.let {
-                            val calendar = Calendar.getInstance()
+                            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
                         calendar.timeInMillis = it
-                        val day = calendar.get(Calendar.DAY_OF_MONTH) + 1
+                        val day = calendar.get(Calendar.DAY_OF_MONTH)
                         val month = calendar.get(Calendar.MONTH) + 1
                         val year = calendar.get(Calendar.YEAR)
-                        textDate.value = String.format("%02d/%02d/%04d", day, month, year)
+                        textDate = String.format("%02d/%02d/%04d", day, month, year)
                     }
                         showDatePicker = false
                     },
                     onDismiss = { showDatePicker = false}
                 )
-            } //Fechamento IF
-        } //Fechamento Coluna
-    } //Fechamento Scaffold
-} // Fechamento fun
+            }
+
+            if (showTimePicker) {
+                Horario(
+                    onTimeSelected = { hour, minute ->
+                        textTime = String.format("%02d:%02d", hour, minute)
+                        showTimePicker = false
+                    },
+                    onDismiss = { showTimePicker = false }
+                )
+            }
+
+
+        }
+    }
+}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerModal(
+fun Data(
     onDateSelected: (Long?) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -312,3 +345,26 @@ fun DatePickerModal(
         DatePicker(state = datePickerState)
     }
 }
+
+@Composable
+fun Horario(
+    onTimeSelected: (Int, Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+    val minute = calendar.get(Calendar.MINUTE)
+    TimePickerDialog(
+        context, { _, selectedHour, selectedMinute ->
+            onTimeSelected(selectedHour, selectedMinute)
+        },
+        hour,
+        minute,
+        false
+    ).apply {
+        setOnCancelListener { onDismiss() }
+        show()
+    }
+}
+

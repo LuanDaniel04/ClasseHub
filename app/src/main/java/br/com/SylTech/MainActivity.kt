@@ -8,18 +8,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import br.com.SylTech.model.Colecao
-import br.com.SylTech.model.CollectionViewModel
+import br.com.SylTech.model.NotesViewModel
 import br.com.SylTech.screens.CollectionScreen
+import br.com.SylTech.screens.EditNoteScreen
 import br.com.SylTech.screens.HomeScreen
 import br.com.SylTech.screens.NewNote
 import br.com.SylTech.screens.NewReminderScreen
+import br.com.SylTech.screens.NoteDetailScreen
 import br.com.SylTech.screens.ReminderScreen
 import br.com.SylTech.screens.SplashScreen
 import br.com.SylTech.ui.theme.ClasseHubTheme
-import br.com.SylTech.model.NotesViewModel
-import br.com.SylTech.screens.EditNoteScreen
-import br.com.SylTech.screens.NoteDetailScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
