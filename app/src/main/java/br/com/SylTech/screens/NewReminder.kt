@@ -29,7 +29,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -55,8 +54,16 @@ fun NewReminderScreen(navController: NavController) {
     var textNote  by  remember { mutableStateOf("") }
     var textDate by remember { mutableStateOf("") }
     var textTime by remember { mutableStateOf("") }
+
+    var ErrorTitle by remember { mutableStateOf(false) }
+    var ErrorNote by remember { mutableStateOf(false) }
+    var ErrorDate by remember { mutableStateOf(false) }
+    var ErrorTime by remember { mutableStateOf(false) }
+
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+
+
     val context = LocalContext.current
 
 
@@ -117,9 +124,14 @@ fun NewReminderScreen(navController: NavController) {
                             color = Color(0xFF8A8A8E)
                         )
                     },
+                    isError = ErrorTitle,
+                    supportingText = {
+                        if (ErrorTitle) Text("Title cannot be empty")
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
+                        errorContainerColor = Color(0xFFFFDAD6),
 
                         focusedLabelColor = Color.Black,
                         unfocusedLabelColor = Color.Black,
@@ -156,9 +168,14 @@ fun NewReminderScreen(navController: NavController) {
                             color = Color(0xFF8A8A8E)
                         )
                     },
+                    isError = ErrorNote,
+                    supportingText = {
+                        if (ErrorNote) Text("Note cannot be empty")
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
+                        errorContainerColor = Color(0xFFFFDAD6),
 
                         focusedLabelColor = Color.Black,
                         unfocusedLabelColor = Color.Black,
@@ -195,6 +212,10 @@ fun NewReminderScreen(navController: NavController) {
                             color = Color(0xFF8A8A8E)
                         )
                     },
+                    isError = ErrorDate,
+                    supportingText = {
+                        if (ErrorDate) Text("Date cannot be empty")
+                    },
                     trailingIcon = { IconButton(
                         onClick = {
                             showDatePicker = true
@@ -205,6 +226,7 @@ fun NewReminderScreen(navController: NavController) {
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
+                        errorContainerColor = Color(0xFFFFDAD6),
 
                         focusedLabelColor = Color.Black,
                         unfocusedLabelColor = Color.Black,
@@ -234,6 +256,10 @@ fun NewReminderScreen(navController: NavController) {
                     placeholder = {
                         Text("11:30", style = MaterialTheme.typography.bodySmall, color = Color(0xFF8A8A8E))
                     },
+                    isError = ErrorTime,
+                    supportingText = {
+                        if (ErrorTime) Text("Time cannot be empty")
+                    },
                     trailingIcon = {
                         IconButton(onClick = { showTimePicker = true }) {
                             Icon(Icons.Outlined.DateRange, "", tint = Color(0xFF48454E))
@@ -242,9 +268,11 @@ fun NewReminderScreen(navController: NavController) {
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color.White,
                         unfocusedContainerColor = Color.White,
+                        errorContainerColor = Color(0xFFFFDAD6),
 
                         focusedLabelColor = Color.Black,
                         unfocusedLabelColor = Color.Black,
+                        errorLeadingIconColor = Color.Black,
 
                         focusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
@@ -257,20 +285,33 @@ fun NewReminderScreen(navController: NavController) {
                     readOnly = true
                 )
 
-                Spacer(Modifier.height(200.dp))
+                Spacer(Modifier.weight(1f))
 
                 Button(onClick = {
-                    val repository = ReminderRepository(context)
-                    val reminder = br.com.SylTech.model.Reminder(
-                        titulo = textTitle,
-                        nota = textNote,
-                        data = textDate,
-                        hora = textTime
-                    )
-                    val result = repository.Create(reminder)
-                    if (result > 0) {
-                        navController.popBackStack()
+                   val titleValid = textTitle.trim().isNotEmpty()
+                    val noteValid = textNote.trim().isNotEmpty()
+                    val dateValid = textDate.trim().isNotEmpty()
+                    val timeValid = textTime.trim().isNotEmpty()
+
+                    ErrorTitle = !titleValid
+                    ErrorNote = !noteValid
+                    ErrorDate = !dateValid
+                    ErrorTime = !timeValid
+
+                    if (titleValid && noteValid && dateValid && timeValid) {
+                        val repository = ReminderRepository(context)
+                        val reminder = br.com.SylTech.model.Reminder(
+                            titulo = textTitle.trim(),
+                            nota = textNote.trim(),
+                            data = textDate.trim(),
+                            hora = textTime.trim()
+                        )
+                        val result = repository.Create(reminder)
+                        if (result > 0) {
+                            navController.popBackStack()
+                        }
                     }
+
                 }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF615690)), modifier = Modifier.width(400.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Outlined.Done, "", tint = Color.White)

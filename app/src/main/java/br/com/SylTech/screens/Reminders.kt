@@ -47,10 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import br.com.SylTech.model.Reminder
+import br.com.SylTech.model.ReminderViewModel
 import br.com.SylTech.repository.ReminderRepository
 
 @Composable
-fun ReminderScreen(navController: NavController) {
+fun ReminderScreen(navController: NavController, viewModel: ReminderViewModel) {
 
     val query = remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -92,13 +93,18 @@ fun ReminderScreen(navController: NavController) {
 
                     items(filteredReminder.size) { index ->
                         val reminder: Reminder = filteredReminder[index]
-                        CustomReminderCard(reminder, navController)
+                        CustomReminderCard(navController,viewModel,reminder) {
+                            ReminderRepository(context).Delete(reminder.id!!)
+                            navController.navigate("Reminder") {
+                                popUpTo("Reminder") { inclusive = true }
+                            }
+
+                        }
                         Spacer(Modifier.height(8.dp))
                 }
 
             }
         }
-
     }
 }
 
@@ -221,10 +227,13 @@ fun CustomEmptyReminder(navController: NavController) {
 }
 
 @Composable
-fun CustomReminderCard(reminder: Reminder, navController: NavController) {
+fun CustomReminderCard( navController: NavController,viewModel: ReminderViewModel,reminder: Reminder, delete: (Reminder) -> Unit) {
     var checked by remember { mutableStateOf(true) }
     ElevatedCard(
-        Modifier.fillMaxWidth().height(80.dp).clickable { navController.navigate("Home") },
+        Modifier.fillMaxWidth().height(80.dp).clickable {
+            viewModel.select(reminder)
+            navController.navigate("ReadReminder")
+        },
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         )
@@ -250,7 +259,7 @@ fun CustomReminderCard(reminder: Reminder, navController: NavController) {
                         checkedThumbColor = Color.White,
                         checkedTrackColor = Color(0xFF615690),
                         uncheckedThumbColor = Color.White,
-                        uncheckedTrackColor = Color(0xFF615690),
+                        uncheckedTrackColor = Color.Gray,
                         uncheckedBorderColor = Color.Transparent,
                         checkedIconColor = Color.Black,
                         uncheckedIconColor = Color.Black
@@ -259,10 +268,14 @@ fun CustomReminderCard(reminder: Reminder, navController: NavController) {
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(reminder.titulo, style = MaterialTheme.typography.titleMedium, color = Color.Black, maxLines = 1)
-                    Text(reminder.hora, style = MaterialTheme.typography.titleSmall, color = Color.Black, maxLines = 1)
+                    Text(reminder.nota, style = MaterialTheme.typography.titleSmall, color = Color.Black, maxLines = 1)
                 }
                 Spacer(Modifier.weight(1f))
-                Text(reminder.data, style = MaterialTheme.typography.titleMedium, color = Color.Black)
+                Column {
+                    Text(reminder.data, style = MaterialTheme.typography.titleMedium, color = Color.Black)
+                    Text(reminder.hora, style = MaterialTheme.typography.titleSmall, color = Color.Black, maxLines = 1)
+                }
+                Spacer(Modifier.width(16.dp))
             }
         }
     }

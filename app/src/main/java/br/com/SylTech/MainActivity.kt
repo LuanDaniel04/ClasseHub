@@ -9,8 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.SylTech.model.NotesViewModel
+import br.com.SylTech.model.ReminderViewModel
 import br.com.SylTech.screens.CollectionScreen
 import br.com.SylTech.screens.EditNoteScreen
+import br.com.SylTech.screens.EditReminderScreen
 import br.com.SylTech.screens.HomeScreen
 import br.com.SylTech.screens.NewNote
 import br.com.SylTech.screens.NewReminderScreen
@@ -26,7 +28,9 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             val navController = rememberNavController()
-            val viewModel: NotesViewModel = viewModel()
+            val notesviewModel: NotesViewModel = viewModel()
+            val reminderviewModel: ReminderViewModel = viewModel()
+
 
             ClasseHubTheme {
             NavHost(
@@ -37,7 +41,7 @@ class MainActivity : ComponentActivity() {
                     SplashScreen(navController)
                 }
                 composable(route = "Home") {
-                    HomeScreen(navController, viewModel)
+                    HomeScreen(navController, notesviewModel)
                 }
                 composable(route = "NewNote") {
                     NewNote(navController)
@@ -48,7 +52,8 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable(route = "Reminder") {
-                    ReminderScreen(navController)
+
+                    ReminderScreen(navController,reminderviewModel)
                 }
 
                 composable(route = "NewReminder") {
@@ -56,10 +61,13 @@ class MainActivity : ComponentActivity() {
                 }
 
                 composable(route = "ReadNote") {
-                    NoteDetailScreen(navController, viewModel)
+                    NoteDetailScreen(navController, notesviewModel)
                 }
                 composable(route = "EditNote") {
-                    EditNoteScreen(navController,viewModel)
+                    EditNoteScreen(navController,notesviewModel)
+                }
+                composable(route = "ReadReminder") {
+                    EditReminderScreen(navController, reminderviewModel)
                 }
             }
             }
